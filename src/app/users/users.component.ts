@@ -1,5 +1,5 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {UsersService} from './users.service';
+import {UserService} from './user.service';
 
 @Component({
   selector: 'app-users',
@@ -7,16 +7,14 @@ import {UsersService} from './users.service';
   styleUrls: ['./users.component.scss']
 })
 export class UsersComponent implements OnInit {
-  usersService: UsersService;
   users: any[] = [];
   @Input() search: string;
 
-  constructor(usersService: UsersService) {
-    this.usersService = usersService;
+  constructor(private userService: UserService) {
   }
 
-  ngOnInit() {
-    this.usersService.get().then(data => this.users = data);
+  async ngOnInit() {
+    this.users = await this.userService.get();
   }
 
 }
