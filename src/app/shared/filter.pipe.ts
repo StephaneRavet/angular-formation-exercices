@@ -1,15 +1,19 @@
 import {Pipe, PipeTransform} from '@angular/core';
+import {User} from './user.interface';
 
 @Pipe({
   name: 'filter'
 })
 export class FilterPipe implements PipeTransform {
-  transform(items: any[], searchText: string): any[] {
-    if (!items) { return []; }
-    if (!searchText) { return items; }
-    searchText = searchText.toLowerCase();
-    return items.filter(item => {
-      return item.name.toLowerCase().includes(searchText);
-    });
+
+  transform(users: User[], criteria: string): User[] {
+    if (!criteria) {
+      return users;
+    }
+    return users.filter(
+      user => user.name
+        .toLowerCase().includes(criteria.toLowerCase())
+    );
   }
+
 }

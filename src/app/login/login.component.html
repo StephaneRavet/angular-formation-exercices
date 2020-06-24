@@ -1,0 +1,17 @@
+<form (ngSubmit)="login()" [formGroup]="myForm">
+  <div *ngIf="isSubmitted">
+    <div *ngIf="email.hasError('required')">
+      Email requis
+    </div>
+    <div *ngIf="email.hasError('forbiddenChar')">
+      Caractère invalide : {{ email.errors.forbiddenChar}}
+    </div>
+    <div *ngIf="email.hasError('emailExists')">
+      Email exist !
+    </div>
+  </div>
+  <br>Email <input type="email" [formControl]="email"/>
+  <br>Password <input type="password" [formControl]="password"/>
+  <br>
+  <button>Valider</button>
+</form>

@@ -1,3 +1,9 @@
-<p *ngFor="let user of users | filter : search">
-  {{user.name}} : {{user.age}}
-</p>
+<app-search (search)="onSearchChange($event)"></app-search>
+<br><br>
+<ul>
+  <li *ngFor="let user of users$ | async | filter:criteria; let i=index; trackBy: trackByUserId">
+    <button (click)="remove(i)">Supprimer</button>
+    {{user.name}} - {{user.address.fullAddress}}
+  </li>
+</ul>
+<button (click)="add()">Ajouter</button>

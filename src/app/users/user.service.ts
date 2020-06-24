@@ -1,17 +1,61 @@
-# à 1000ms, Eva se connecte
-10 # à 1400ms, "Eva envoi un like"
-10 # à 1800ms, "Eva envoi un like"
-# à 2000ms, Aude se connecte
-10 # à 2200ms, "Eva envoi un like"
-20 # à 2400ms, "Aude envoi un like"
-10 # à 2600ms, "Eva envoi un like"
-20 # à 2800ms, "Aude envoi un like"
-# à 3000ms, Anne se connecte
-10 # à 3000ms, "Eva envoi un like"
-20 # à 3200ms, "Aude envoi un like"
-25 # à 3400ms, "Anne envoi un like"
-10 # à 3400ms, "Eva envoi un like"
-20 # à 3600ms, "Aude envoi un like"
-25 # à 3800ms, "Anne envoi un like"
-10 # à 3800ms, "Eva envoi un like"
-# ...
+import {Injectable} from '@angular/core';
+import {HttpClient} from '@angular/common/http';
+import {User} from '../shared/user.interface';
+import {Observable} from 'rxjs';
+import {map} from 'rxjs/operators';
+import {FormControl, ValidationErrors} from '@angular/forms';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class UserService {
+
+  users: User[];
+  url = 'https://jsonplaceholder.typicode.com/users';
+
+  constructor(private http: HttpClient) {
+  }
+
+  _checkEmail(input: FormControl): Promise<ValidationErrors | null> {
+    return this.http
+      .get(this.url + '/1')
+      .toPromise()
+      .then((user: User) => {
+        return user.email === input.value ? {emailExists: true} : null;
+      });
+  }
+
+  async get(): Promise<User[]> {
+    return this.users = await this.http
+      .get<User[]>(this.url)
+      .toPromise();
+  }
+
+  get$(): Observable<User[]> {
+    return this.http
+      .get<User[]>(this.url)
+      .pipe(
+        map((users: User[]) => {
+          return users.map((user: User) => {
+            user.address.fullAddress =
+              user.address.street
+              + ', ' + user.address.suite
+              + ', ' + user.address.zipcode
+              + ' ' + user.address.city;
+            return user;
+          });
+        }),
+      );
+  }
+
+  add(): User[] {
+    const newIndex = this.users.length + 1;
+    const newUser = {name: `Test${newIndex}`, id: newIndex};
+    return this.users = [...this.users, newUser];
+  }
+
+  removeUser(index): User[] {
+    this.users.splice(index, 1);
+    return this.users = [...this.users];
+  }
+}
